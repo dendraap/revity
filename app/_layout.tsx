@@ -1,56 +1,133 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { SplashScreen, Stack } from 'expo-router';
+import { ClerkProvider, useAuth, useSession } from '@clerk/clerk-expo';
+import { Slot, useRouter, useSegments } from 'expo-router';
 import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+import { useFonts } from 'expo-font';
+import { ApolloProvider, ApolloClient, HttpLink, from, InMemoryCache, createHttpLink, } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import { loadErrorMessages, loadDevMessages} from "@apollo/client/dev"
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
+const CLERK_PUBLISHABLE_KEY = 'pk_test_ZXhjaXRpbmctc2hlZXAtMTMuY2xlcmsuYWNjb3VudHMuZGV2JA';
+const GRAPHQL_URI = 'https://valued-anteater-53.hasura.app/v1/graphql';
 
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+if (__DEV__) {
+  loadErrorMessages();
+  loadDevMessages();
+}
+
+const InitialLayout = () => {
+  const { isLoaded, isSignedIn } = useAuth();
+
+  const segments = useSegments();
+  const router = useRouter();
+
+  // const { getToken } = useAuth();
+
+  useEffect(() => {
+    // console.log('isSignedIn changed', isSignedIn)
+    if (!isLoaded) return;
+
+    const inTabsGroup = segments[0] === '(auth)';
+
+    if (isSignedIn && !inTabsGroup) {
+      router.replace('/home');
+    } else if (!isSignedIn) {
+      router.replace('/login');
+    }
+  }, [isSignedIn]);
+
+  return <Slot />;
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+const tokenCache = {
+  async getToken(key: string) {
+    try {
+      return SecureStore.getItemAsync(key);
 
-export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font,
+    } catch (err) {
+      return null;
+    }
+  },
+  async saveToken(key: string, value: string) {
+    try {
+      return SecureStore.setItemAsync(key, value);
+    } catch (err) {
+      return;
+    }
+  },
+};
+
+// console.log(tokenCache.saveToken.toString)
+
+const RootLayout = () => {
+  const [isFontsLoaded] = useFonts({
+    'Poppins-Regular': require('../assets/fonts/Poppins-Regular.ttf'),
+    'Poppins-Medium': require('../assets/fonts/Poppins-Medium.ttf'),
+    'Poppins-SemiBold': require('../assets/fonts/Poppins-SemiBold.ttf'),
+    'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
+  if (!isFontsLoaded) {
+    return;
   }
 
-  return <RootLayoutNav />;
-}
+  const httpLink = createHttpLink({
+    uri: 'https://valued-anteater-53.hasura.app/v1/graphql',
+  });
 
-function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+  const authLink = setContext((_, { headers }) => {
+    return {
+      headers: {
+        ...headers,
+        'x-hasura-admin-secret': 'POF5gqe2zFgJcNXsPAm4bqajjnlfhtaOXCEt77btz6YNqRyLoTgxnKPW9XL421om',
+      },
+    };
+  });
 
+  const client = new ApolloClient({
+    link: authLink.concat(httpLink),
+    cache: new InMemoryCache(),
+  });
+
+  // console.log(tokenCache)
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-    </ThemeProvider>
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
+      <ApolloProvider client={client}>
+        <InitialLayout />
+
+      </ApolloProvider>
+      {/* <ApolloProviderWrapper> */}
+      {/* </ApolloProviderWrapper> */}
+    </ClerkProvider>
   );
-}
+};
+
+// const ApolloProviderWrapper = ({children}) => {
+//   // const { sessionId } = useAuth();
+//   const { getToken } = useSession();
+
+//   const authMiddleware = setContext(async (_, { headers }) => {
+//     // const { sessionId } = useAuth();
+//     // const sessionId = await getToken();
+//     console.log('Current Session ID:', sessionId);
+//     return {
+//       headers: {
+//         ...headers,
+//         authorization: `Bearer ${sessionId}`,
+//       },
+//     };
+//   });
+
+//   const httpLink = new HttpLink({
+//     uri: GRAPHQL_URI,
+//   });
+
+//   const apolloClient = new ApolloClient({
+//     link: from([authMiddleware, httpLink]),
+//     cache: new InMemoryCache(),
+//   });
+
+//   return <ApolloProvider client={apolloClient}>{children}</ApolloProvider>;
+// };
+
+export default RootLayout;
