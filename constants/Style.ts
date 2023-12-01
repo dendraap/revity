@@ -9,7 +9,7 @@ export const defaultStyles = StyleSheet.create({
         backgroundColor: Colors.white,
     },
     container: {
-        flex: 1,
+        flex: 1,   
         backgroundColor: Colors.white,
         justifyContent: 'space-between',
     },

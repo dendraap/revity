@@ -1,14 +1,19 @@
-import { useSignIn } from '@clerk/clerk-expo';
+import { useSignIn, useOAuth } from '@clerk/clerk-expo';
 import { Link } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, StyleSheet, TextInput, Button, Pressable, Text, Alert, Image, TouchableOpacity, StatusBar } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Colors from '../../constants/Colors'
 import { defaultStyles } from '../../constants/Style'
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useWarmUpBrowser } from '../../hooks/useWarmUpBrowser';
+import * as WebBrowser from "expo-web-browser";
+
+WebBrowser.maybeCompleteAuthSession();
 
 const Login = () => {
+  useWarmUpBrowser();
   const { signIn, setActive, isLoaded } = useSignIn();
 
   const [emailAddress, setEmailAddress] = useState('');
@@ -20,6 +25,8 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
   const [hidden, setHidden] = useState(false);
+
+
 
   const onSignInPress = async () => {
     if (!isLoaded) {
@@ -44,6 +51,37 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  const {startOAuthFlow: googleAuth} = useOAuth({strategy: 'oauth_google'})
+  const handleGoogleSignIn  = useCallback( async () => {
+    // try {
+    //   const { createdSessionId, signIn, signUp, setActive } = await startOAuthFlow();
+ 
+    //   if (createdSessionId) {
+    //     setActive({ session: createdSessionId });
+    //   } else {
+    //     // Use signIn or signUp for next steps such as MFA
+    //   }
+    // } catch (err) {
+    //   console.error("OAuth error", err);
+    // } finally {
+    //   setLoading(false);
+    // }
+
+    try {
+      const {createdSessionId, setActive} = await googleAuth();
+      console.log("login~onSelectAuth~createSessionId:", createdSessionId)
+
+      if (createdSessionId){
+        setActive!({session: createdSessionId});
+        
+      }
+    } catch(err){
+      console.error('OAuth error: ', err)
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   return (
     <SafeAreaView style={[defaultStyles.containerFluid, { gap: 20 }]}>
@@ -91,7 +129,7 @@ const Login = () => {
       </TouchableOpacity>
 
       <View >
-        <TouchableOpacity style={[defaultStyles.btnOutline, { gap: 10 }]} onPress={() => { }}>
+        <TouchableOpacity style={[defaultStyles.btnOutline, { gap: 10 }]} onPress={handleGoogleSignIn }>
           <Ionicons name='logo-google' size={24} style={[defaultStyles.btnIcon]} />
           <Text style={defaultStyles.btnOutlineText}>
             Masuk dengan Google
@@ -121,3 +159,7 @@ const Login = () => {
 };
 
 export default Login;
+
+function startOAuthFlow(): { createdSessionId: any; signIn: any; signUp: any; setActive: any; } | PromiseLike<{ createdSessionId: any; signIn: any; signUp: any; setActive: any; }> {
+  throw new Error('Function not implemented.');
+}

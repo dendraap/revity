@@ -1,6 +1,6 @@
 import { View, Text, Button, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
-import { useUser } from '@clerk/clerk-expo';
+import { useUser, useAuth } from '@clerk/clerk-expo';
 import Colors from '../../constants/Colors'
 import { defaultStyles } from '../../constants/Style'
 
@@ -8,6 +8,7 @@ const Profile = () => {
   const { user } = useUser();
   const [firstName, setFirstName] = useState(user?.firstName);
   const [lastName, setLastName] = useState(user?.lastName);
+  const {signOut, isSignedIn} = useAuth();
 
   const onSaveUser = async () => {
     try {
