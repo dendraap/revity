@@ -5,7 +5,10 @@ import * as SecureStore from 'expo-secure-store';
 import { useFonts } from 'expo-font';
 import { ApolloProvider, ApolloClient, HttpLink, from, InMemoryCache, createHttpLink, } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import { loadErrorMessages, loadDevMessages} from "@apollo/client/dev"
+import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev"
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const CLERK_PUBLISHABLE_KEY = 'pk_test_ZXhjaXRpbmctc2hlZXAtMTMuY2xlcmsuYWNjb3VudHMuZGV2JA';
 const GRAPHQL_URI = 'https://valued-anteater-53.hasura.app/v1/graphql';
@@ -93,8 +96,13 @@ const RootLayout = () => {
   return (
     <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
       <ApolloProvider client={client}>
-        <InitialLayout />
-
+        <SafeAreaProvider>
+          <GestureHandlerRootView style={{flex: 1}}>
+            <BottomSheetModalProvider>
+              <InitialLayout />
+            </BottomSheetModalProvider>
+          </GestureHandlerRootView>
+        </SafeAreaProvider>
       </ApolloProvider>
       {/* <ApolloProviderWrapper> */}
       {/* </ApolloProviderWrapper> */}

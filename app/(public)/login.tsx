@@ -1,7 +1,7 @@
 import { useSignIn, useOAuth } from '@clerk/clerk-expo';
 import { Link } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { View, StyleSheet, TextInput, Button, Pressable, Text, Alert, Image, TouchableOpacity, StatusBar } from 'react-native';
+import { View, TextInput, Pressable, Text, Image, TouchableOpacity, StatusBar } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Colors from '../../constants/Colors'
 import { defaultStyles } from '../../constants/Style'
@@ -19,14 +19,11 @@ const Login = () => {
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
   const [hidden, setHidden] = useState(false);
-
-
 
   const onSignInPress = async () => {
     if (!isLoaded) {
@@ -39,12 +36,9 @@ const Login = () => {
         password,
       });
 
-      
       // This indicates the user is signed in
       await setActive({ session: completeSignIn.createdSessionId });
       console.log('login.tsx:24 ~ onSignInPress ~ completeSignIn', completeSignIn)
-      // console.log(completeSignIn.createdSessionId)
-      // console.log(completeSignIn.identifier)
     } catch (err: any) {
       alert(err.errors[0].message);
     } finally {
@@ -52,31 +46,17 @@ const Login = () => {
     }
   };
 
-  const {startOAuthFlow: googleAuth} = useOAuth({strategy: 'oauth_google'})
-  const handleGoogleSignIn  = useCallback( async () => {
-    // try {
-    //   const { createdSessionId, signIn, signUp, setActive } = await startOAuthFlow();
- 
-    //   if (createdSessionId) {
-    //     setActive({ session: createdSessionId });
-    //   } else {
-    //     // Use signIn or signUp for next steps such as MFA
-    //   }
-    // } catch (err) {
-    //   console.error("OAuth error", err);
-    // } finally {
-    //   setLoading(false);
-    // }
-
+  const { startOAuthFlow: googleAuth } = useOAuth({ strategy: 'oauth_google' })
+  const handleGoogleSignIn = useCallback(async () => {
     try {
-      const {createdSessionId, setActive} = await googleAuth();
+      const { createdSessionId, setActive } = await googleAuth();
       console.log("login~onSelectAuth~createSessionId:", createdSessionId)
 
-      if (createdSessionId){
-        setActive!({session: createdSessionId});
-        
+      if (createdSessionId) {
+        setActive!({ session: createdSessionId });
+
       }
-    } catch(err){
+    } catch (err) {
       console.error('OAuth error: ', err)
     } finally {
       setLoading(false);
@@ -93,7 +73,6 @@ const Login = () => {
       />
       <View style={{ flex: 1, justifyContent: 'center' }}>
         <Image source={require('../../assets/images/icon_revity_text.png')} style={{ resizeMode: 'contain', width: 200, alignSelf: 'center' }} />
-
       </View>
 
       <View>
@@ -127,9 +106,8 @@ const Login = () => {
           Masuk
         </Text>
       </TouchableOpacity>
-
       <View >
-        <TouchableOpacity style={[defaultStyles.btnOutline, { gap: 10 }]} onPress={handleGoogleSignIn }>
+        <TouchableOpacity style={[defaultStyles.btnOutline, { gap: 10 }]} onPress={handleGoogleSignIn}>
           <Ionicons name='logo-google' size={24} style={[defaultStyles.btnIcon]} />
           <Text style={defaultStyles.btnOutlineText}>
             Masuk dengan Google
@@ -157,9 +135,4 @@ const Login = () => {
     </SafeAreaView>
   );
 };
-
 export default Login;
-
-function startOAuthFlow(): { createdSessionId: any; signIn: any; signUp: any; setActive: any; } | PromiseLike<{ createdSessionId: any; signIn: any; signUp: any; setActive: any; }> {
-  throw new Error('Function not implemented.');
-}

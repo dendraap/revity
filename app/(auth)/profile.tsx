@@ -28,7 +28,6 @@ const Profile = () => {
       <Text style={{ textAlign: 'center' }}>
         Good morning {user?.firstName} {user?.lastName}!
       </Text>
-
       <TextInput placeholder="Ubah nama" value={firstName || ''} onChangeText={setFirstName} style={defaultStyles.input} />
       <TouchableOpacity style={defaultStyles.btnPrimary} onPress={onSaveUser}>
         <Text style={[defaultStyles.btnText, { fontSize: 17 }]}>

@@ -1,19 +1,16 @@
-import { Button, TextInput, View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
+import { TextInput, View, Image, Text, TouchableOpacity } from 'react-native';
 import { useSignUp } from '@clerk/clerk-expo';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { useState } from 'react';
-import { Link, Stack, router } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import Colors from '../../constants/Colors'
 import { defaultStyles } from '../../constants/Style'
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useMutation } from '@apollo/client';
-import { INSERT_USER } from '../../app/mutation/insert_user'
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useWarmUpBrowser } from '../../hooks/useWarmUpBrowser'
 
 const Register = () => {
   useWarmUpBrowser();
   const { isLoaded, signUp, setActive } = useSignUp();
-
 
   const [firstName, setFirstName] = useState("");
   const [emailAddress, setEmailAddress] = useState('');
@@ -26,14 +23,6 @@ const Register = () => {
     setShowPassword(!showPassword);
   };
 
-  const [insertUser, { error }] = useMutation(INSERT_USER, {
-    onCompleted: (data) => {
-      console.log('User berhasil dibuat:', data.insert_users.returning[0]);
-    },
-    onError: (error) => {
-      console.error('Error dalam mutasi:', error);
-    },
-  });
   // Create the user and send the verification email
   const onSignUpPress = async () => {
     if (!isLoaded) {
@@ -63,7 +52,6 @@ const Register = () => {
 
   // Verify the email address
   const onPressVerify = async () => {
-    
     if (!isLoaded) {
       return;
     }
@@ -73,18 +61,8 @@ const Register = () => {
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code,
       });
-      
 
-      // console.log('register.tsx:24 ~ onPressVerify ~ completeSignUp', completeSignUp)
       await setActive({ session: completeSignUp.createdSessionId });
-     
-      insertUser({
-        variables: {
-          name: completeSignUp.firstName,
-          email: completeSignUp.emailAddress,
-          password: password,
-        },
-      });
       console.log('register.tsx:24 ~ onPressVerify ~ completeSignUp', completeSignUp)
     } catch (err: any) {
       alert(err.errors[0].message);

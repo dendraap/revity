@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import Colors from '../../revity/constants/Colors';
 import { PieChart } from 'react-native-gifted-charts';
 
@@ -10,12 +10,15 @@ const HomeDoughnutChart = () => {
   ];
 
   return(
-    <View style={{margin: 20, alignItems: 'center'}}>
+    <View>
       <PieChart
         donut
-        innerRadius={50}
-        radius={110}
+        innerRadius={30}
+        radius={65}
         showText
+        focusOnPress
+        toggleFocusOnPress
+        // backgroundColor={Colors.primarySecondary}
         textColor="white"
         textSize={14}
         labelsPosition='outward'

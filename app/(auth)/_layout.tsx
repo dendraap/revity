@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Stack, Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable } from 'react-native';
 import { useAuth } from '@clerk/clerk-expo';
@@ -6,7 +6,6 @@ import Colors from '../../constants/Colors'
 
 export const LogoutButton = () => {
   const { signOut } = useAuth();
-
   const doLogout = () => {
     signOut();
   };
@@ -22,7 +21,7 @@ const TabsPage = () => {
   const { isSignedIn } = useAuth();
 
   return (
-    <Tabs
+    <Stack
       screenOptions={{
         headerStyle: {
           backgroundColor: Colors.primary,
@@ -61,7 +60,7 @@ const TabsPage = () => {
         }}
         redirect={!isSignedIn}
       />
-    </Tabs>
+    </Stack>
   );
 };
 

@@ -1,10 +1,9 @@
-import { View, StyleSheet, TextInput, Button, TouchableOpacity, Text } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text } from 'react-native';
 import React, { useState } from 'react';
 import { Stack } from 'expo-router';
 import { useSignIn } from '@clerk/clerk-expo';
-import Colors from '../../constants/Colors'
 import { defaultStyles } from '../../constants/Style'
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const PwReset = () => {
   const [emailAddress, setEmailAddress] = useState('');
@@ -12,7 +11,6 @@ const PwReset = () => {
   const [code, setCode] = useState('');
   const [successfulCreation, setSuccessfulCreation] = useState(false);
   const { signIn, setActive } = useSignIn();
-
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -39,9 +37,7 @@ const PwReset = () => {
         code,
         password,
       });
-      // console.log(result);
       alert('Password reset successfully');
-
       // Set the user session active, which will log in the user automatically
       await setActive!({ session: result.createdSessionId });
     } catch (err: any) {
