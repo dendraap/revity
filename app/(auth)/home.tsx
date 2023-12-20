@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Keyboard, FlatList, Image, Animated } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Keyboard, FlatList, Image, Animated, ActivityIndicator } from 'react-native';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useUser, useAuth } from '@clerk/clerk-expo';
 import Colors from '../../constants/Colors';
@@ -716,7 +716,8 @@ const Home = () => {
   }
 
   const LoadingIndicator = () => (
-    <Text style={{ textAlign: 'center', textAlignVertical: 'center' }}>Loading...</Text>
+    // <Text style={{ textAlign: 'center', textAlignVertical: 'center' }}>Loading...</Text>
+    <ActivityIndicator size="large" color="#0000ff"/>
   );
 
   const ErrorIndicator = ({ error }) => (

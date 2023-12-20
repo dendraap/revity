@@ -38,8 +38,9 @@ const Login = () => {
 
       // This indicates the user is signed in
       await setActive({ session: completeSignIn.createdSessionId });
-      console.log('login.tsx:24 ~ onSignInPress ~ completeSignIn', completeSignIn)
+      // console.log('login.tsx:24 ~ onSignInPress ~ completeSignIn', completeSignIn)
     } catch (err: any) {
+      // return <Text>{err.errors[0].message}</Text>
       alert(err.errors[0].message);
     } finally {
       setLoading(false);
@@ -50,7 +51,7 @@ const Login = () => {
   const handleGoogleSignIn = useCallback(async () => {
     try {
       const { createdSessionId, setActive } = await googleAuth();
-      console.log("login~onSelectAuth~createSessionId:", createdSessionId)
+      // console.log("login~onSelectAuth~createSessionId:", createdSessionId)
 
       if (createdSessionId) {
         setActive!({ session: createdSessionId });

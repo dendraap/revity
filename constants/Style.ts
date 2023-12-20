@@ -24,8 +24,8 @@ export const defaultStyles = StyleSheet.create({
     },
     sheetContainer: {
         marginHorizontal: 24,
-        borderColor: Colors.orange,
-        borderWidth: 2,
+        // borderColor: Colors.orange,
+        // borderWidth: 2,
         borderRadius: 17
     },
     sheetcontainerP: {
