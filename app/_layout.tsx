@@ -11,7 +11,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const CLERK_PUBLISHABLE_KEY = 'pk_test_ZXhjaXRpbmctc2hlZXAtMTMuY2xlcmsuYWNjb3VudHMuZGV2JA';
-const GRAPHQL_URI = 'https://valued-anteater-53.hasura.app/v1/graphql';
 
 if (__DEV__) {
   loadErrorMessages();
@@ -24,10 +23,7 @@ const InitialLayout = () => {
   const segments = useSegments();
   const router = useRouter();
 
-  // const { getToken } = useAuth();
-
   useEffect(() => {
-    // console.log('isSignedIn changed', isSignedIn)
     if (!isLoaded) return;
 
     const inTabsGroup = segments[0] === '(auth)';
@@ -60,8 +56,6 @@ const tokenCache = {
   },
 };
 
-// console.log(tokenCache.saveToken.toString)
-
 const RootLayout = () => {
   const [isFontsLoaded] = useFonts({
     'Poppins-Regular': require('../assets/fonts/Poppins-Regular.ttf'),
@@ -89,10 +83,32 @@ const RootLayout = () => {
 
   const client = new ApolloClient({
     link: authLink.concat(httpLink),
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      typePolicies: {
+        Query: {
+          fields: {
+            tasks: {
+              merge(existing = [], incoming) {
+                const merged = existing.slice();
+                for (let i = 0; i < incoming.length; ++i) {
+                  const item = incoming[i];
+                  const index = existing.findIndex((e: any) => e.idtask === item.idtask);
+                  if (index !== -1) {
+                    merged[index] = item;
+                  } else {
+                    merged.push(item);
+                  }
+                }
+                return merged;
+              },
+            },
+          },
+        },
+      },
+    }),
   });
+  
 
-  // console.log(tokenCache)
   return (
     <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
       <ApolloProvider client={client}>
@@ -104,38 +120,8 @@ const RootLayout = () => {
           </GestureHandlerRootView>
         </SafeAreaProvider>
       </ApolloProvider>
-      {/* <ApolloProviderWrapper> */}
-      {/* </ApolloProviderWrapper> */}
     </ClerkProvider>
   );
 };
-
-// const ApolloProviderWrapper = ({children}) => {
-//   // const { sessionId } = useAuth();
-//   const { getToken } = useSession();
-
-//   const authMiddleware = setContext(async (_, { headers }) => {
-//     // const { sessionId } = useAuth();
-//     // const sessionId = await getToken();
-//     console.log('Current Session ID:', sessionId);
-//     return {
-//       headers: {
-//         ...headers,
-//         authorization: `Bearer ${sessionId}`,
-//       },
-//     };
-//   });
-
-//   const httpLink = new HttpLink({
-//     uri: GRAPHQL_URI,
-//   });
-
-//   const apolloClient = new ApolloClient({
-//     link: from([authMiddleware, httpLink]),
-//     cache: new InMemoryCache(),
-//   });
-
-//   return <ApolloProvider client={apolloClient}>{children}</ApolloProvider>;
-// };
 
 export default RootLayout;

@@ -2,20 +2,7 @@ import { Stack, Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable } from 'react-native';
 import { useAuth } from '@clerk/clerk-expo';
-import Colors from '../../constants/Colors'
-
-export const LogoutButton = () => {
-  const { signOut } = useAuth();
-  const doLogout = () => {
-    signOut();
-  };
-
-  return (
-    <Pressable onPress={doLogout} style={{ marginRight: 10 }}>
-      <Ionicons name="log-out-outline" size={24} color={'#fff'} />
-    </Pressable>
-  );
-};
+import Colors from '../../lib/constants/Colors'
 
 const TabsPage = () => {
   const { isSignedIn } = useAuth();
@@ -42,21 +29,11 @@ const TabsPage = () => {
         redirect={!isSignedIn}
       />
       <Tabs.Screen
-        name="addTasks"
-        options={{
-          headerTitle: 'Tambah Tugas',
-          tabBarIcon: ({ color, size }) => <Ionicons name="time" size={size} color={color} />,
-          tabBarLabel: 'Tambah Tugas',
-        }}
-        redirect={!isSignedIn}
-      />
-      <Tabs.Screen
         name="profile"
         options={{
           headerTitle: 'Profile',
           tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
           tabBarLabel: 'Profile',
-          headerRight: () => <LogoutButton />,
         }}
         redirect={!isSignedIn}
       />
