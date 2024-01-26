@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "revity",
+    "name": "Revity",
     "slug": "revity",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -16,14 +16,16 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dendra.revity"
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon_revity.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.dendra.revity"
     },
     "web": {
       "bundler": "metro",
@@ -35,6 +37,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "b1414675-39b4-405f-a40f-ffbfe9c10dac"
+      }
+    },
+    "owner": "dendra"
   }
 }
