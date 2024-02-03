@@ -42,7 +42,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][poster]](https://masterpiece.uisi.ac.id/karya/revity){:target="_blank"}
+[![Product Name Screen Shot][poster]](https://masterpiece.uisi.ac.id/karya/revity)
 
 The project aims to fulfill the Software Development Project course assignment. This project have been created as a team, which there were 5 people's in one team, such as:
 1. `Pradipta Shofianisa` as Project Manager
