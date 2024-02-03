@@ -1,7 +1,7 @@
 <a name="readme-top"></a>
 <p align="center">
-    <a name="icon-linkedin" href="https://www.linkedin.com/in/dendra-ardana-putra/">
-        <img src="https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555" alt="LinkedIn">
+    <a name="icon-uisi" href="https://masterpiece.uisi.ac.id/karya/revity" target="_blank">
+        <img src="https://img.shields.io/badge/-Universitas_Internasional_Semen_Indonesia-black.svg?style=for-the-badge&logo=&colorB=DB2728" alt="UISI">
     </a>
 </p>
 
